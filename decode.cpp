@@ -111,6 +111,7 @@ int main(int argc,char *argv[])
        {
            key += "=";
        }
+       kfs.close();
     }
     else
     {
