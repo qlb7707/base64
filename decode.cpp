@@ -17,10 +17,10 @@ using namespace std;
 
 string std_key="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
-int do_decode(unsigned char src[],unsigned char dst[],int len, vector<int> &key)
+int do_decode(unsigned char src[],unsigned char dst[],int len, vector<int> &key, char padding)
 {
     int real_len = 3;
-    int equ_cnt = 0;
+    int pad_cnt = 0;
     unsigned int number = 0;
     if( len != 4)
     {
@@ -29,17 +29,17 @@ int do_decode(unsigned char src[],unsigned char dst[],int len, vector<int> &key)
     }
     for(int i = 0; i< 4; i++)
     {
-        if(src[i] == '=')
+        if(src[i] == padding)
         {
             src[i] = 0;
-            equ_cnt ++;
+            pad_cnt ++;
         }
         else
             src[i] = key[src[i]];
 
         number += (unsigned int)(src[i] & 0x3f) << (6 *(3-i));
     }
-    real_len -= equ_cnt;
+    real_len -= pad_cnt;
 
     for(int i = 0; i < 3; i++)
     {
@@ -49,7 +49,7 @@ int do_decode(unsigned char src[],unsigned char dst[],int len, vector<int> &key)
     return real_len;
 }
 
-void do_file_decode(string filename,int mode,vector<int> &key)
+void do_file_decode(string filename,int mode,vector<int> &key, char padding)
 {
     ifstream ifs;
     ofstream ofs;
@@ -80,7 +80,7 @@ void do_file_decode(string filename,int mode,vector<int> &key)
         len = ifs.read((char*)ori,4).gcount();
         if(len <= 0)
             break;
-        real_len = do_decode(ori,decoded,len,key);
+        real_len = do_decode(ori,decoded,len,key,padding);
         ofs.write((char*)decoded,real_len);
         if(len < 4)
             break;
@@ -96,6 +96,7 @@ int main(int argc,char *argv[])
     string filename = "base64_out.txt";
     string keyfile = "key.txt";
     string key;
+    char padding;
     vector<int> reversed_key(128,-1);
     ifstream kfs;
     kfs.open(keyfile.c_str(),ios::in);
@@ -117,6 +118,7 @@ int main(int argc,char *argv[])
     {
         key = std_key;
     }
+    padding = key[key.length()-1];
     generate_reversed_key(key,reversed_key);
     int mode = 0;
     if(argc >= 2)
@@ -127,6 +129,6 @@ int main(int argc,char *argv[])
     {
         mode = str2int(argv[2]);
     }
-    do_file_decode(filename,mode,reversed_key);
+    do_file_decode(filename,mode,reversed_key,padding);
     
 }
