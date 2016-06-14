@@ -94,7 +94,7 @@ void do_file_decode(string filename,int mode,vector<int> &key, char padding)
 int main(int argc,char *argv[])
 {
     string filename = "base64_out.txt";
-    string keyfile = "key.txt";
+    string keyfile = "/usr/local/etc/key.txt";
     string key;
     char padding;
     vector<int> reversed_key(128,-1);

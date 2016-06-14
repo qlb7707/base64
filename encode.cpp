@@ -119,7 +119,7 @@ void do_file_encode(string filename, int mode, string key)
 int main(int argc,char* argv[])
 {
     string filename = "test.txt";
-    string keyfile = "key.txt";
+    string keyfile = "/usr/local/etc/key.txt";
     string key;
     ifstream kfs;
     kfs.open(keyfile.c_str(),ios::in);
